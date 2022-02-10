@@ -1,5 +1,6 @@
 from Crypto.Hash import keccak
-import hashlib, binascii
+from backports.pbkdf2 import pbkdf2_hmac
+import hashlib, hmac, binascii, os
 # import whirlpool
 
 
@@ -45,8 +46,56 @@ import hashlib, binascii
 # whirlpool512 = whirlpool.new(b'hello').hexdigest()
 # print('Whirlpool512: ', binascii.hexlify(whirlpool512))
 
-# PRACTICING MAC AND HMAC
-import hashlib, hmac, binascii
 
-mac = hmac.new(b'key', b'some msg', hashlib.sha256).digest()
-print("HMAC-SHA256: ", binascii.hexlify(mac))
+
+
+
+
+
+
+# # PRACTICING MAC AND HMAC
+
+# # mac = hmac.new(b'keystone', b'light', hashlib.sha256).digest()
+# # print("HMAC-SHA256: ", binascii.hexlify(mac))
+
+# # def hmac_sha256(key, msg):
+# #   return hmac.new(key, msg, hashlib.sha256).digest()
+
+# # key = b"12345"
+# # msg = b"the tomatoes are coming"
+# # print("HMAC-SHA256: ", binascii.hexlify(hmac_sha256(key, msg)))
+
+# def hmac_sha384(key, msg):
+#     return hmac.new(key, msg, hashlib.sha384).digest()
+
+# key = b"cryptography"
+# msg = b"hello"
+# print("HMAC-SHA384: ", binascii.hexlify(hmac_sha384(key, msg)))
+# print('Expected output is: 83d1c3d3774d8a32b8ea0460330c16d1b2e3e5c0ea86ccc2d70e603aa8c8151d675dfe339d83f3f495fab226795789d4')
+
+# key = b"again"
+# msg = b"hello"
+# print("HMAC-SHA384: ", binascii.hexlify(hmac_sha384(key, msg)))
+# print('Expected output is: 4c549a549aa037e0fb651569bf271faa23cfa20e8a9d21438a6ff5bf6be916bebdbaa48001e0cd6941ec74cd02be70e5')
+
+
+
+
+
+
+
+# PRACTICING KEY DERIVATION FUNCTIONS
+
+# PBKDF2
+# key = pbkdf2(password, salt, iterations-count, hash-function, derived-key-len)
+
+##    password – array of bytes / string, e.g. "p@$Sw0rD~3" (8-10 chars minimal length is recommended)
+##    salt – securely-generated random bytes, e.g. "df1f2d3f4d77ac66e9c5a6c3d8f921b6" (minimum 64 bits, 128 bits is recommended)
+##    iterations-count, e.g. 1024 iterations
+##    hash-function for calculating HMAC, e.g. SHA256
+##    derived-key-len for the output, e.g. 32 bytes (256 bits)
+
+salt = binascii.unhexlify('aaef2d3f4d77ac66e9c5a6c3d8f921d1')
+passwd = "p@$Sw0rD~1".encode("utf8")
+key = pbkdf2_hmac("sha256", passwd, salt, 100000, 32)
+print("Derived key:", binascii.hexlify(key))
