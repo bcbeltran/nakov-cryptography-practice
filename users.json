@@ -1,0 +1,24 @@
+{"users": [
+    {
+        "username": "bob", 
+        "password": "$argon2id$v=19$m=262144,t=20,p=2$+Ktl3oCzI1BSiu0uPIXfxg$86qQgu59LTn4OEl3C/dPEKg8ROb1l9Qrc8ifD4R6YNo"
+    },
+    {
+        "username": "george", 
+        "password": "$argon2id$v=19$m=262144,t=20,p=2$Q0VpQkvGA9f7R+RLu4yl2g$tVPFM7t6y+0yuRVcGKQvQCLmc1oyd3lxjFtG0ZZTeQU"
+    },
+    {
+        "username": "mary", 
+        "password": "$argon2id$v=19$m=262144,t=20,p=2$9EQzU8SGCFmcYqDjuDGq/w$Icf1qCgCIameOsLUxqCjlBybFCAOa3VItimsuQPax3g"
+    },
+    {
+        "username": "potato", 
+        "password": "$argon2id$v=19$m=262144,t=20,p=2$08Lceh2ZlRm8lPBRJkdeFQ$f6+ntleuzG0Hze+bdQR/pcg9c1nS75UWsUpf98Ie1NQ"
+    },
+    {
+        "username": "ralph", 
+        "password": "$argon2id$v=19$m=262144,t=20,p=2$rMVnmJpZLjK4kKfnFSE1oQ$SAMVPLvPET9YWfBKJrWUJivCaMSAB0YZzAPHYx9PnTo"
+    }
+]
+
+}

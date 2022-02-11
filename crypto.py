@@ -134,20 +134,93 @@ import hashlib, hmac, binascii, os
 # parallelism p: degree of parallelism (i.e. number of threads)
 # outputKeyLength T: desired number of returned bytes
 
+# time_cost = number of iterations
+# memory_cost = memory to use in KB
+# parallelism = how many parallel threads to use
+# hash_len = size of the derived key
+# salt_len = size of the random generated salt, typically 128 bits/ 16 bytes
+import json
 
-hash = argon2.hash_password_raw(
-    time_cost=16, memory_cost=2**15, parallelism=2, hash_len=32, password=b'password', salt=b'some salt', type=argon2.low_level.Type.ID)
-print('Argon2 raw hash: ', binascii.hexlify(hash))
+with open('users.json') as f:
+   data = json.load(f)
 
-argon2Hasher = argon2.PasswordHasher(
-    time_cost=16, memory_cost=2**15, parallelism=2, hash_len=32, salt_len=16)
-hash = argon2Hasher.hash('password')
-print("Argon2 hash (random salt): ", hash)
 
-verifyValid = argon2Hasher.verify(hash, 'password')
-print("Argon2 verity (correct password): ", verifyValid)
+def register_user(username, password, data):
+    for i in data['users']:
+        if i['username'] == username:
+            return print('This user already exists')
+    hash = argon2.hash_password_raw(
+        time_cost=20, memory_cost=2**18, parallelism=2, hash_len=32, password=password.encode(), salt=b'some salt', type=argon2.low_level.Type.ID)
+    print('Argon2 raw hash: ', binascii.hexlify(hash))
 
-try:
-    argon2Hasher.verify(hash, 'wrong123')
-except:
-    print("Argon2 verify (incorrect password): ", False)
+    argon2Hasher = argon2.PasswordHasher(
+        time_cost=20, memory_cost=2**18, parallelism=2, hash_len=32, salt_len=16)
+    argHash = argon2Hasher.hash(password)
+    print("Argon2 hash (random salt): ", argHash)
+
+    new_user = {"username": username, "password": argHash}
+
+    data['users'].append(new_user)
+
+    print(json.dumps(data))
+
+def login(username, password, data):
+    for i in data['users']:
+        if i['username'] == username:
+            userPassword = i['password']
+
+    argon2Hasher = argon2.PasswordHasher(
+        time_cost=20, memory_cost=2**18, parallelism=2, hash_len=32, salt_len=16)
+    argHash = argon2Hasher.hash(password)
+    print("Argon2 hash (random salt): ", argHash)
+
+    verifyValid = argon2Hasher.verify(userPassword, password)
+
+    if verifyValid:
+        return print("Correct login")
+    else:
+        return print("Incorrect login")
+
+
+def change_password(username, old_password, new_password, data):
+    for i in data['users']:
+        if i['username'] == username:
+            oldPassword = i['password']
+            print('original user: ', i['username'] , i['password'])
+
+
+    argon2Hasher = argon2.PasswordHasher(
+        time_cost=20, memory_cost=2**18, parallelism=2, hash_len=32, salt_len=16)
+
+    verifyValid = argon2Hasher.verify(oldPassword, old_password)
+
+    if verifyValid:
+        print("Correct login")
+    
+    newArgHash = argon2Hasher.hash(new_password)
+
+    for i in data['users']:
+        if i['username'] == username:
+            i['password'] = newArgHash
+            print('updated user: ', i['username'], i['password'])
+        
+    return data['users']
+
+
+
+change_password('bob', 'bob', 'bobo', data)
+
+
+
+register_user('bob', 'bob', data)
+login('bob', 'bob', data)
+
+
+
+
+
+
+    # try:
+    #     argon2Hasher.verify(hash, 'wrong123')
+    # except:
+    #     print("Argon2 verify (incorrect password): ", False)
