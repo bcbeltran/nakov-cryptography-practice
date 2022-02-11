@@ -225,3 +225,27 @@ import hashlib, hmac, binascii, os
 
 
 
+### RANDOM NUMBER GENERATORS ###
+
+
+import random, time, secrets
+
+#print(random.randrange(1000000, 9999999))
+
+
+# EXAMPLE OF WHY NORMAL PRNG ARE LESS SECURE THAN CSPRNG
+# random.seed(time.time())
+# r1 = random.randrange(1e49, 1e50-1)
+
+# random.seed(time.time())
+# r2 = random.randrange(1e49, 1e50-1)
+
+# print("r1 ", r1)
+# print("r2 ", r2)
+
+
+
+### USING SECRETS LIBRARY FOR A CSPRNG
+
+import secrets
+print(secrets.randbelow(int(1e50)))
