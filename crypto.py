@@ -1,3 +1,5 @@
+import pyscrypt
+import argon2
 from Crypto.Hash import keccak
 from backports.pbkdf2 import pbkdf2_hmac
 import hashlib, hmac, binascii, os
@@ -95,7 +97,57 @@ import hashlib, hmac, binascii, os
 ##    hash-function for calculating HMAC, e.g. SHA256
 ##    derived-key-len for the output, e.g. 32 bytes (256 bits)
 
-salt = binascii.unhexlify('aaef2d3f4d77ac66e9c5a6c3d8f921d1')
-passwd = "p@$Sw0rD~1".encode("utf8")
-key = pbkdf2_hmac("sha256", passwd, salt, 100000, 32)
-print("Derived key:", binascii.hexlify(key))
+# salt = binascii.unhexlify('aaef2d3f4d77ac66e9c5a6c3d8f921d1')
+# passwd = "p@$Sw0rD~1".encode("utf8")
+# key = pbkdf2_hmac("sha256", passwd, salt, 100000, 32)
+# print("Derived key:", binascii.hexlify(key))
+
+
+
+
+
+## Scrypt
+
+# key = Scrypt(password, salt, N, r, p, derived-key-len)
+
+# password– the input password (8-10 chars minimal length is recommended)
+# salt – securely-generated random bytes (64 bits minimum, 128 bits recommended)
+# N – iterations count (affects memory and CPU usage), e.g. 16384 or 2048
+# r – block size (affects memory and CPU usage), e.g. 8
+# p – parallelism factor (threads to run in parallel - affects the memory, CPU usage), usually 1
+# derived-key-length - how many bytes to generate as output, e.g. 32 bytes (256 bits)
+
+
+# salt = b'aa1f2d3f4d23ac44e9c5a6c3d8f9ee8c'
+# passwd = b'shAmaLamAD1ngD0ng!'
+# key = pyscrypt.hash(passwd, salt, 2048, 8, 1, 32)
+# print("Derived key:", key.hex())
+
+
+
+# Argon2
+
+# password P: the password (or message) to be hashed
+# salt S: random-generated salt (16 bytes recommended for password hashing)
+# iterations t: number of iterations to perform
+# memorySizeKB m: amount of memory (in kilobytes) to use
+# parallelism p: degree of parallelism (i.e. number of threads)
+# outputKeyLength T: desired number of returned bytes
+
+
+hash = argon2.hash_password_raw(
+    time_cost=16, memory_cost=2**15, parallelism=2, hash_len=32, password=b'password', salt=b'some salt', type=argon2.low_level.Type.ID)
+print('Argon2 raw hash: ', binascii.hexlify(hash))
+
+argon2Hasher = argon2.PasswordHasher(
+    time_cost=16, memory_cost=2**15, parallelism=2, hash_len=32, salt_len=16)
+hash = argon2Hasher.hash('password')
+print("Argon2 hash (random salt): ", hash)
+
+verifyValid = argon2Hasher.verify(hash, 'password')
+print("Argon2 verity (correct password): ", verifyValid)
+
+try:
+    argon2Hasher.verify(hash, 'wrong123')
+except:
+    print("Argon2 verify (incorrect password): ", False)
